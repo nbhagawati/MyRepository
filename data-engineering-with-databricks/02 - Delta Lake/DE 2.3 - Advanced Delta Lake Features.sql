@@ -103,7 +103,7 @@ WHEN NOT MATCHED AND u.type = "insert"
 
 -- COMMAND ----------
 
-DESCRIBE EXTENDED students
+describe extended students
 
 -- COMMAND ----------
 
@@ -138,8 +138,22 @@ DESCRIBE DETAIL students
 
 -- COMMAND ----------
 
+-- MAGIC %fs
+-- MAGIC ls dbfs:/user/nayanjyoti.bhagawati@resideo.com/dbacademy/dewd/2.3/2_3.db/students
+
+-- COMMAND ----------
+
 -- MAGIC %python
 -- MAGIC display(dbutils.fs.ls(f"{DA.paths.user_db}/students"))
+
+-- COMMAND ----------
+
+-- MAGIC %fs
+-- MAGIC ls dbfs:/user/nayanjyoti.bhagawati@resideo.com/dbacademy/dewd/2.3/2_3.db/students/_delta_log/
+
+-- COMMAND ----------
+
+describe history students
 
 -- COMMAND ----------
 
@@ -191,6 +205,12 @@ DESCRIBE DETAIL students
 -- MAGIC Rather than overwriting or immediately deleting files containing changed data, Delta Lake uses the transaction log to indicate whether or not files are valid in a current version of the table.
 -- MAGIC 
 -- MAGIC Here, we'll look at the transaction log corresponding the **`MERGE`** statement above, where records were inserted, updated, and deleted.
+
+-- COMMAND ----------
+
+-- MAGIC %python
+-- MAGIC display(spark.sql("select * from json.path(`dbfs:/user/nayanjyoti.bhagawati@resideo.com/dbacademy/dewd/2.3/2_3.db/students/_delta_log/00000000000000000007.json`)"))
+-- MAGIC `
 
 -- COMMAND ----------
 
@@ -262,7 +282,7 @@ DESCRIBE HISTORY students
 -- COMMAND ----------
 
 SELECT * 
-FROM students VERSION AS OF 3
+FROM students-- VERSION AS OF 3
 
 -- COMMAND ----------
 
@@ -332,7 +352,7 @@ RESTORE TABLE students TO VERSION AS OF 8
 
 -- COMMAND ----------
 
--- VACUUM students RETAIN 0 HOURS
+VACUUM students RETAIN 0 HOURS
 
 -- COMMAND ----------
 

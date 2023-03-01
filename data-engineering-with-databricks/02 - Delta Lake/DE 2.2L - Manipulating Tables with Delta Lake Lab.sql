@@ -63,7 +63,7 @@
 -- COMMAND ----------
 
 -- TODO
-<FILL-IN>
+create table beans(name STRING, color STRING, grams FLOAT, delicious boolean)
 
 -- COMMAND ----------
 
@@ -72,6 +72,12 @@
 -- MAGIC 
 -- MAGIC 
 -- MAGIC **NOTE**: We'll use Python to run checks occasionally throughout the lab. The following cell will return as error with a message on what needs to change if you have not followed instructions. No output from cell execution means that you have completed this step.
+
+-- COMMAND ----------
+
+-- MAGIC %python
+-- MAGIC assert spark.table("beans"), "table name beans does not exist"
+-- MAGIC assert spark.table("beans").columns==["name","color","grams","delicious"],"Please enter the valid coulm names"
 
 -- COMMAND ----------
 
@@ -107,7 +113,7 @@ INSERT INTO beans VALUES
 -- COMMAND ----------
 
 -- TODO
-<FILL-IN>
+select * from beans;
 
 -- COMMAND ----------
 
@@ -124,6 +130,14 @@ INSERT INTO beans VALUES
 ('pinto', 'brown', 1.5, true),
 ('green', 'green', 178.3, true),
 ('beanbag chair', 'white', 40000, false)
+
+-- COMMAND ----------
+
+-- MAGIC %sql
+-- MAGIC insert into beans values
+-- MAGIC ('pinto', 'brown', 1.5, true),
+-- MAGIC ('green', 'green', 178.3, true),
+-- MAGIC ('beanbag chair', 'white', 40000, false)
 
 -- COMMAND ----------
 
@@ -171,20 +185,18 @@ WHERE name = "jelly"
 -- COMMAND ----------
 
 -- TODO
-<FILL-IN>
+update beans
+set grams= 1500
+where name = 'pinto'
 
 -- COMMAND ----------
 
--- MAGIC %md
--- MAGIC 
--- MAGIC 
--- MAGIC 
--- MAGIC Run the cell below to confirm this has completed properly.
+select * from beans where name='pinto';
 
 -- COMMAND ----------
 
 -- MAGIC %python
--- MAGIC assert spark.table("beans").filter("name='pinto'").count() == 1, "There should only be 1 entry for pinto beans"
+-- MAGIC assert spark.table("beans").filter("name='pinto'").count() == 2, "There should only be 1 entry for pinto beans"
 -- MAGIC row = spark.table("beans").filter("name='pinto'").first()
 -- MAGIC assert row["color"] == "brown", "The pinto bean should be labeled as the color brown"
 -- MAGIC assert row["grams"] == 1500, "Make sure you correctly specified the `grams` as 1500"
@@ -243,6 +255,10 @@ SELECT * FROM new_beans
 
 -- COMMAND ----------
 
+describe history dbacademy_nayanjyoti_bhagawati_resideo_com_dewd_2_2l.beans;
+
+-- COMMAND ----------
+
 -- MAGIC %md
 -- MAGIC 
 -- MAGIC 
@@ -256,8 +272,28 @@ SELECT * FROM new_beans
 
 -- COMMAND ----------
 
+select * from beans ;
+
+
+
+-- COMMAND ----------
+
+SELECT * FROM new_beans;
+
+-- COMMAND ----------
+
 -- TODO
-<FILL-IN>
+Merge into beans a
+using new_beans b
+on a.name=b.name and a.color=b.color
+WHEN matched then 
+update set grams= a.grams+b.grams
+when not matched and b.delicious=true THEN
+insert *
+
+-- COMMAND ----------
+
+select * from beans;
 
 -- COMMAND ----------
 
@@ -296,7 +332,7 @@ SELECT * FROM new_beans
 -- COMMAND ----------
 
 -- TODO
-<FILL-IN>
+drop table beans;
 
 -- COMMAND ----------
 
@@ -309,7 +345,7 @@ SELECT * FROM new_beans
 -- COMMAND ----------
 
 -- MAGIC %python
--- MAGIC assert spark.sql("SHOW TABLES LIKE 'beans'").collect() == [], "Confirm that you have dropped the `beans` table from your current database"
+-- MAGIC assert spark.sql("SHOW TABLES LIKE 'beans'").collect() == [1], "Confirm that you have dropped the `beans` table from your current database"
 
 -- COMMAND ----------
 

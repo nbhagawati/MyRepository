@@ -58,8 +58,8 @@
 
 -- COMMAND ----------
 
-CREATE TABLE students
-  (id INT, name STRING, value DOUBLE);
+-- MAGIC %sql
+-- MAGIC create table students(id int, name STRING, value double )
 
 -- COMMAND ----------
 
@@ -173,6 +173,11 @@ SELECT * FROM students
 
 -- COMMAND ----------
 
+-- MAGIC %fs
+-- MAGIC show history
+
+-- COMMAND ----------
+
 -- MAGIC %md
 -- MAGIC 
 -- MAGIC 
@@ -228,6 +233,16 @@ SELECT * FROM updates;
 
 -- COMMAND ----------
 
+select * from students;
+
+
+
+-- COMMAND ----------
+
+select * from updates;
+
+-- COMMAND ----------
+
 MERGE INTO students b
 USING updates u
 ON b.id=u.id
@@ -237,6 +252,10 @@ WHEN MATCHED AND u.type = "delete"
   THEN DELETE
 WHEN NOT MATCHED AND u.type = "insert"
   THEN INSERT *
+
+-- COMMAND ----------
+
+select * from students
 
 -- COMMAND ----------
 
@@ -275,7 +294,7 @@ DROP TABLE students
 -- COMMAND ----------
 
 -- MAGIC %python
--- MAGIC DA.cleanup()
+-- MAGIC %run ./_utility-methods $lesson="2.1"
 
 -- COMMAND ----------
 

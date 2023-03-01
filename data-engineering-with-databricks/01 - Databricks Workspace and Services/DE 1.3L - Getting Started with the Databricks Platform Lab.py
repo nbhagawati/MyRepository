@@ -49,6 +49,10 @@
 
 # COMMAND ----------
 
+print("hi")
+
+# COMMAND ----------
+
 # MAGIC %md
 # MAGIC 
 # MAGIC 

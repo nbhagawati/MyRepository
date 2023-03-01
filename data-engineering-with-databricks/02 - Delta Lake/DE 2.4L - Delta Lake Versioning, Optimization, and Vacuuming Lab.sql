@@ -105,7 +105,7 @@ WHEN NOT MATCHED AND b.delicious = true THEN
 -- COMMAND ----------
 
 -- TODO
-<FILL-IN>
+describe history beans;
 
 -- COMMAND ----------
 
@@ -145,7 +145,7 @@ WHEN NOT MATCHED AND b.delicious = true THEN
 
 -- COMMAND ----------
 
-SELECT * FROM beans VERSION AS OF 1
+select * from beans version as of 1
 
 -- COMMAND ----------
 
@@ -171,7 +171,7 @@ SELECT * FROM beans
 
 -- TODO
 CREATE OR REPLACE TEMP VIEW pre_delete_vw AS
-<FILL-IN>
+select * from beans version as of 4
 
 -- COMMAND ----------
 
@@ -205,7 +205,7 @@ SELECT * FROM pre_delete_vw
 -- COMMAND ----------
 
 -- TODO
-<FILL-IN>
+describe history beans;
 
 -- COMMAND ----------
 
@@ -220,10 +220,34 @@ DESCRIBE HISTORY beans
 
 -- COMMAND ----------
 
+restore table beans version as of 5
+
+-- COMMAND ----------
+
 -- MAGIC %python
 -- MAGIC last_tx = spark.conf.get("spark.databricks.delta.lastCommitVersionInSession")
 -- MAGIC assert spark.sql(f"DESCRIBE HISTORY beans").select("operation").first()[0] == "RESTORE", "Make sure you reverted your table with the `RESTORE` keyword"
 -- MAGIC assert spark.table("beans").count() == 5, "Make sure you reverted to the version after deleting records but before merging"
+
+-- COMMAND ----------
+
+-- MAGIC %python
+-- MAGIC res = spark.table("beans").count();
+-- MAGIC print(res)
+
+-- COMMAND ----------
+
+select count(*) from beans;
+
+-- COMMAND ----------
+
+-- MAGIC %scala
+-- MAGIC val result = spark.table("beans").count();
+-- MAGIC print(result)
+
+-- COMMAND ----------
+
+select count(*) from beans;
 
 -- COMMAND ----------
 
@@ -240,7 +264,8 @@ DESCRIBE HISTORY beans
 -- COMMAND ----------
 
 -- TODO
-<FILL-IN>
+optimize beans
+zorder by name
 
 -- COMMAND ----------
 
@@ -262,10 +287,21 @@ DESCRIBE DETAIL beans
 
 -- COMMAND ----------
 
+Describe History beans;
+
+-- COMMAND ----------
+
+-- MAGIC %python
+-- MAGIC last_tx = spark.sql("DESCRIBE HISTORY beans").first()
+-- MAGIC print(last_tx)
+
+-- COMMAND ----------
+
 -- MAGIC %python
 -- MAGIC last_tx = spark.sql("DESCRIBE HISTORY beans").first()
 -- MAGIC assert last_tx["operation"] == "OPTIMIZE", "Make sure you used the `OPTIMIZE` command to perform file compaction"
 -- MAGIC assert last_tx["operationParameters"]["zOrderBy"] == '["name"]', "Use `ZORDER BY name` with your optimize command to index your table"
+-- MAGIC print(last_tx)
 
 -- COMMAND ----------
 
